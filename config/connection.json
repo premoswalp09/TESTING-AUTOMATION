@@ -1,0 +1,10 @@
+{
+    "account": "your_account_id.region.gcp",
+    "user": "your_username",
+    "password": "your_password",
+    "role": "your_role",
+    "warehouse": "your_warehouse",
+    "database": "your_database",
+    "schema": "your_schema"
+  }
+  
