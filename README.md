@@ -48,7 +48,11 @@ This modular, lightweight solution integrates easily with CI/CD workflows, enabl
      "schema": "your_schema"
    }
    ```
-4. Set up your Snowflake trial account and execute the DDLs provided in the `setup_ddl/` directory using the Snowflake SQL worksheet.
+4. In VS code terminal, Run -
+   ```bash
+   pip install -r requirments.txt
+   ```
+5. Set up your Snowflake trial account and execute the DDLs provided in the `setup_ddl/` directory using the Snowflake SQL worksheet.
 
 ---
 
