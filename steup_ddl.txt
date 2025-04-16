@@ -1,0 +1,99 @@
+-- Creating 2 Databases with name CGDF and common_dimension and loading data from snowflake's Sample data available.
+-- Make cloned DB 
+-- Make TEST_AUTOMATION_UTILITY DB and Create Storage location for minus query results
+
+CREATE DATABASE CGDF;
+CREATE DATABASE common_dimension;
+
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+USE DATABASE CGDF;
+
+-- Creating sales schema and populating it with orders and lineitems
+CREATE SCHEMA sales_data;
+CREATE TABLE sales_data.orders AS 
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.ORDERS;
+CREATE TABLE sales_data.lineitems AS 
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.LINEITEM;
+
+-- Creating finance schema and populating it with supplier and nation
+CREATE SCHEMA finance_data;
+CREATE TABLE finance_data.supplier AS 
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.SUPPLIER;
+CREATE TABLE finance_data.nation AS 
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.NATION;
+
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+USE DATABASE common_dimension;
+
+-- Creating customer schema and populating it with customers and region
+CREATE SCHEMA customer_data;
+CREATE TABLE customer_data.customers AS 
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.CUSTOMER;
+CREATE TABLE customer_data.region AS 
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.REGION;
+
+-- Creating product schema and populating it with parts and partsupplier
+CREATE SCHEMA product_data;
+CREATE TABLE product_data.parts AS 
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.PART;
+CREATE TABLE product_data.partsupplier AS 
+SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF1.PARTSUPP;
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-- Clone CGDF and common_dimension
+CREATE OR REPLACE DATABASE CGDF_cloned CLONE CGDF;
+CREATE DATABASE common_dimension_cloned CLONE common_dimension;
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+-- Create Automation_utility_DB
+CREATE DATABASE TEST_AUTOMATION_UTILITY;
+
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+-- Create table TEST_SCRIPTS
+CREATE OR REPLACE TABLE TEST_AUTOMATION_UTILITY.PUBLIC.TEST_SCRIPTS (
+    TS_ID STRING PRIMARY KEY,
+    APPLICATION_NAME VARCHAR(1000), -- The database/schema being validated
+    VALIDATION_TYPE VARCHAR(100), -- Type of validation (Count Check or Data Check)
+    SOURCE_SCRIPT STRING, -- SQL query to fetch data from source
+    TARGET_SCRIPT STRING, -- SQL query to fetch data from target
+    MINUS_QUERY STRING, -- SQL query to check mismatches
+    ACTIVE_FLAG CHAR(1) -- Determines if test case should execute
+);
+
+-- Create table TEST_LOGS
+CREATE OR REPLACE TABLE TEST_AUTOMATION_UTILITY.PUBLIC.TEST_LOGS (
+    USER_ID VARCHAR(1000),  -- User who executed the test case
+    RUN_ID VARCHAR(1000),  -- To maintain Run count for each DB
+    TS_ID STRING,  -- Reference to TEST_SCRIPTS table
+    VALIDATION_TYPE VARCHAR(100), 
+    EXECUTED_QUERY STRING,  -- The executed SQL queries
+    SOURCE_COUNT INT,  -- Count from source query
+    TARGET_COUNT INT,  -- Count from target query
+    STATUS VARCHAR(100), -- Test case result
+    EXPECTED_RESULT STRING, -- Expected Results
+    ACTUAL_RESULT STRING, -- Results Got
+    MINUS_QUERY_FILE_PATH STRING,  -- Path of CSV file (if Data Check fails)
+    RESULT_FILE_PATH STRING,
+    EXECUTION_TIME FLOAT,  -- Time taken for execution (in seconds)
+    EXECUTION_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP(),  -- Timestamp of execution
+    ERROR_DESCRIPTION STRING,  -- Error details if any
+    CONSTRAINT FK_TS_ID FOREIGN KEY (TS_ID) REFERENCES TEST_AUTOMATION_UTILITY.PUBLIC.TEST_SCRIPTS(TS_ID)
+);
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+-- Create STAGE for storing CSV files for mismatch
+CREATE STAGE mismatch_results FILE_FORMAT = (TYPE = 'CSV');
+----------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+CREATE OR REPLACE TABLE TEST_AUTOMATION_UTILITY.PUBLIC.RUN_ID_TRACKER (
+    DATABASE_NAME VARCHAR(100),
+    RUN_NUMBER INT,
+    PRIMARY KEY (DATABASE_NAME)
+);
+
