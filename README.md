@@ -1,6 +1,6 @@
 # Automated Data Validation and Reporting Framework for Snowflake Pipelines
 
-> **🎥 Video Demo:** [Click here to watch the execution demo](https://drive.google.com/your-demo-video-link)
+> **🎥 Video Demo:** [Click here to watch the execution demo]([https://drive.google.com/your-demo-video-link](https://drive.google.com/file/d/1Xz0n2JIJPMugii1DEMVc9_L16b_zMouA/view?usp=sharing))
 
 ## 🚀 Project Overview
 
