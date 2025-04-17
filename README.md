@@ -4,6 +4,9 @@
 
 > **🗎 Docmentation:**   [DOC](https://github.com/premoswalp09/TESTING-AUTOMATION/blob/main/Documentation_VCC.pdf)
 
+> **🗎 Presentation:**   [PPT](https://github.com/premoswalp09/TESTING-AUTOMATION/blob/main/Snowflake_Data_Validation_Presentation_Enhanced%20(1).pptx)
+
+
 ## 🚀 Project Overview
 
 This project delivers a robust automation framework for validating data across different stages in **Snowflake-based data pipelines**.
